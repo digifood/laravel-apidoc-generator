@@ -23,6 +23,9 @@ class DingoGenerator extends AbstractGenerator
         $routeDescription = $this->getRouteDescription($routeAction['uses']);
 
         $showresponse = false;
+        $request = '';
+
+
 
         $docblockResponse = $this->getDocblockResponse($routeDescription['tags']);
         if ($docblockResponse) {
@@ -35,6 +38,12 @@ class DingoGenerator extends AbstractGenerator
             }
         }
 
+        $request = $this->getResponseExemple($routeDescription['tags']);
+        if ($request) {
+            $response = $request;
+            $showresponse = true;
+        }
+
         return $this->getParameters([
             'id' => md5($route->uri() . ':' . implode($route->getMethods())),
             'resource' => $routeGroup,
@@ -45,7 +54,7 @@ class DingoGenerator extends AbstractGenerator
             'parameters' => [],
             'response' => $response,
             'showresponse' => $showresponse,
-            'bla' => 'bli',
+            'request' => $request,
         ], $routeAction, $bindings);
     }
 

@@ -237,6 +237,57 @@ abstract class AbstractGenerator
     }
 
     /**
+     * @param  $route
+     * @param  array $bindings
+     *
+     * @return array
+     */
+    protected function getResponseExemple($tags)
+    {
+        $responseTags = array_filter($tags, function ($tag) {
+            if (!($tag instanceof Tag)) {
+                return false;
+            }
+
+            return \strtolower($tag->getName()) == 'trans';
+        });
+        if (empty($responseTags)) {
+            return;
+        }
+        $responseTag = \array_first($responseTags);
+        $className = $responseTag->getContent();
+
+        $class = "App\Api\Transformers\\" . $className;
+
+        $transformer = new $class([]);
+        return $transformer->exemple();
+
+        // return \response(\json_encode($responseTag->getContent()));
+
+        // foreach ($reflectionMethod->getParameters() as $parameter) {
+        //     $parameterType = $parameter->getClass();
+        //     if (!is_null($parameterType) && class_exists($parameterType->name)) {
+        //         $className = $parameterType->name;
+
+        //         if (is_subclass_of($className, FormRequest::class)) {
+        //             $parameterReflection = new $className;
+        //             // Add route parameter bindings
+        //             $parameterReflection->query->add($bindings);
+        //             $parameterReflection->request->add($bindings);
+
+        //             if (method_exists($parameterReflection, 'validator')) {
+        //                 return $parameterReflection->validator()->getRules();
+        //             } else {
+        //                 return $parameterReflection->rules();
+        //             }
+        //         }
+        //     }
+        // }
+
+        return [];
+    }
+
+    /**
      * @param  array  $arr
      * @param  string  $first
      * @param  string  $last
