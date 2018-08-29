@@ -18,19 +18,25 @@ class DingoGenerator extends AbstractGenerator
     {
         $response = '';
 
-        if ($withResponse) {
+        $routeAction = $route->getAction();
+        $routeGroup = $this->getRouteGroup($routeAction['uses']);
+        $routeDescription = $this->getRouteDescription($routeAction['uses']);
+
+        $showresponse = false;
+
+        $docblockResponse = $this->getDocblockResponse($routeDescription['tags']);
+        if ($docblockResponse) {
+            $response = json_decode($docblockResponse->getContent());
+            $showresponse = true;
+        } elseif ($withResponse) {
             try {
                 $response = $this->getRouteResponse($route, $bindings, $headers);
             } catch (Exception $e) {
             }
         }
 
-        $routeAction = $route->getAction();
-        $routeGroup = $this->getRouteGroup($routeAction['uses']);
-        $routeDescription = $this->getRouteDescription($routeAction['uses']);
-
         return $this->getParameters([
-            'id' => md5($route->uri().':'.implode($route->getMethods())),
+            'id' => md5($route->uri() . ':' . implode($route->getMethods())),
             'resource' => $routeGroup,
             'title' => $routeDescription['short'],
             'description' => $routeDescription['long'],
@@ -38,6 +44,8 @@ class DingoGenerator extends AbstractGenerator
             'uri' => $route->uri(),
             'parameters' => [],
             'response' => $response,
+            'showresponse' => $showresponse,
+            'bla' => 'bli',
         ], $routeAction, $bindings);
     }
 
