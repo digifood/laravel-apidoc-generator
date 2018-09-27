@@ -342,7 +342,7 @@ abstract class AbstractGenerator
                 $attributeData['required'] = true;
                 break;
             case 'exemple':
-                $attributeData['exemple'] = $parameters[0];
+                $attributeData['exemple'] = implode(',', $parameters);
                 break;
             case 'accepted':
                 $attributeData['required'] = true;
